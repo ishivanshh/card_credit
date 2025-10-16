@@ -1,0 +1,62 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:15
+    env_file: .env.example
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7
+
+  web:
+    build: .
+    env_file: .env.example
+    volumes:
+      - ./:/code
+      - ./data:/code/data
+    depends_on:
+      - db
+      - redis
+    command: ["gunicorn", "app.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2"]
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_WAIT: "true"
+
+  celery_worker:
+    build: .
+    env_file: .env.example
+    volumes:
+      - ./:/code
+      - ./data:/code/data
+    depends_on:
+      - db
+      - redis
+    command: ["celery", "-A", "app.celery", "worker", "--loglevel=info"]
+    environment:
+      DATABASE_WAIT: "true"
+
+  initializer:
+    build: .
+    env_file: .env.example
+    volumes:
+      - ./:/code
+      - ./data:/code/data
+    depends_on:
+      - db
+      - redis
+    command: ["python", "manage.py", "enqueue_ingest"]
+    environment:
+      DATABASE_WAIT: "true"
+
+volumes:
+  postgres_data:
