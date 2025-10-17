@@ -26,8 +26,8 @@ Endpoints:
 - `GET /api/view-loans/{customer_id}` — view loans for customer
 
 ```
- Python
-shivanshsaxena@Shivanshs-MacBook-Air credit_approval_project % curl -X POST http://localhost:8000/api/register \   
+ # Register response
+curl -X POST http://localhost:8000/api/register \   
   -H "Content-Type: application/json" \
   -d '{
         "first_name": "Shivansh",
@@ -38,4 +38,91 @@ shivanshsaxena@Shivanshs-MacBook-Air credit_approval_project % curl -X POST http
         "approved_limit": 200000
       }'
 
-{"customer_id":303,"name":"Shivansh Saxena","age":20,"monthly_income":"60000.00","approved_limit":"2200000","phone_number":"9876543210"}%  ```
+{"customer_id":303,"name":"Shivansh Saxena","age":20,"monthly_income":"60000.00","approved_limit":"2200000","phone_number":"9876543210"}%  
+```
+
+curl -X POST http://localhost:8000/api/check-eligibility/ \
+  -H "Content-Type: application/json" \
+  -d '{
+        "customer_id": 314,
+        "monthly_income": 60000,
+        "existing_loans": 1
+      }'
+
+{
+  "customer_id": 314,
+  "eligible": true,
+  "max_loan_amount": "2200000",
+  "reason": "Meets all eligibility criteria"
+}
+
+
+
+curl -X POST http://localhost:8000/api/create-loan/ \
+  -H "Content-Type: application/json" \
+  -d '{
+        "customer_id": 314,
+        "loan_amount": 1500000,
+        "tenure_months": 24
+      }'
+
+
+{
+  "loan_id": 102,
+  "customer_id": 314,
+  "loan_amount": "1500000.00",
+  "tenure_months": 24,
+  "status": "approved",
+  "emi": "70000.00",
+  "approved_on": "2025-10-17T17:30:00Z"
+}
+
+
+curl -X GET http://localhost:8000/api/view-loan/102/
+
+{
+  "loan_id": 102,
+  "customer_id": 314,
+  "loan_amount": "1500000.00",
+  "tenure_months": 24,
+  "status": "approved",
+  "emi": "70000.00",
+  "approved_on": "2025-10-17T17:30:00Z",
+  "remaining_balance": "1400000.00"
+}
+
+
+curl -X GET http://localhost:8000/api/view-loans/314/
+
+
+{
+  "customer_id": 314,
+  "loans": [
+    {
+      "loan_id": 102,
+      "loan_amount": "1500000.00",
+      "tenure_months": 24,
+      "status": "approved",
+      "emi": "70000.00",
+      "approved_on": "2025-10-17T17:30:00Z",
+      "remaining_balance": "1400000.00"
+    },
+    {
+      "loan_id": 103,
+      "loan_amount": "500000.00",
+      "tenure_months": 12,
+      "status": "closed",
+      "emi": "45000.00",
+      "approved_on": "2024-05-10T12:00:00Z",
+      "remaining_balance": "0.00"
+    }
+  ]
+}
+
+# API END POINTS
+
+http://localhost:8000/api/register
+http://localhost:8000/api/check-eligibility
+http://localhost:8000/api/create-loan
+http://localhost:8000/api/view-loan/<loan_id>
+http://localhost:8000/api/view-loans/<customer_id>
