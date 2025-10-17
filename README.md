@@ -27,20 +27,20 @@ Endpoints:
 
 ```
  # Register response
-curl -X POST http://localhost:8000/api/register \   
+curl -X POST http://localhost:8000/api/register/ \
   -H "Content-Type: application/json" \
   -d '{
         "first_name": "Shivansh",
         "last_name": "Saxena",
-        "phone_number": "9876543210",
-        "age": 20,  
+        "age": 20,
         "monthly_income": 60000,
-        "approved_limit": 200000
+        "phone_number": "9876543210"
       }'
+
 
 {"customer_id":303,"name":"Shivansh Saxena","age":20,"monthly_income":"60000.00","approved_limit":"2200000","phone_number":"9876543210"}%  
 ```
-
+```
 curl -X POST http://localhost:8000/api/check-eligibility/ \
   -H "Content-Type: application/json" \
   -d '{
@@ -56,8 +56,8 @@ curl -X POST http://localhost:8000/api/check-eligibility/ \
   "reason": "Meets all eligibility criteria"
 }
 
-
-
+```
+```
 curl -X POST http://localhost:8000/api/create-loan/ \
   -H "Content-Type: application/json" \
   -d '{
@@ -77,9 +77,10 @@ curl -X POST http://localhost:8000/api/create-loan/ \
   "approved_on": "2025-10-17T17:30:00Z"
 }
 
+```
 
 curl -X GET http://localhost:8000/api/view-loan/102/
-
+```
 {
   "loan_id": 102,
   "customer_id": 314,
@@ -90,11 +91,12 @@ curl -X GET http://localhost:8000/api/view-loan/102/
   "approved_on": "2025-10-17T17:30:00Z",
   "remaining_balance": "1400000.00"
 }
+```
 
 
 curl -X GET http://localhost:8000/api/view-loans/314/
 
-
+```
 {
   "customer_id": 314,
   "loans": [
@@ -118,7 +120,7 @@ curl -X GET http://localhost:8000/api/view-loans/314/
     }
   ]
 }
-
+```
 # API END POINTS
 
 http://localhost:8000/api/register
